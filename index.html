@@ -175,28 +175,65 @@
             <section class="section photos-section">
                 <p class="tiny-heading">— OUR MEMORIES —</p>
 
-                <div class="polaroid p-left">
+                <div class="polaroid p-left" onclick="showImageModal('images/foto1.jpeg', 'Our very first moment together')">
                     <div class="tape"></div>
                     <img src="images/foto1.jpeg" alt="Memory 1">
                     <p class="caption">Our very first moment together</p>
                 </div>
 
-                <div class="polaroid p-right">
+                <div class="polaroid p-right" onclick="showImageModal('images/foto2.jpeg', 'Our favourite spot in the city')">
                     <div class="tape"></div>
                     <img src="images/foto2.jpeg" alt="Memory 2">
                     <p class="caption">Our favourite spot in the city</p>
                 </div>
 
-                <div class="polaroid p-left">
+                <div class="polaroid p-left" onclick="showImageModal('images/foto3.jpeg', 'Little things that matter')">
                     <div class="tape"></div>
                     <img src="images/foto3.jpeg" alt="Memory 3">
                     <p class="caption">Little things that matter</p>
                 </div>
 
-                <div class="polaroid p-right">
+                <div class="polaroid p-right" onclick="showImageModal('images/foto4.jpeg', 'seruuuu')">
                     <div class="tape"></div>
                     <img src="images/foto4.jpeg" alt="Memory 4">
                     <p class="caption">seruuuu</p>
+                </div>
+            </section>
+
+            <!-- OUR STORY TIMELINE -->
+            <section class="section timeline-section">
+                <p class="tiny-heading">— OUR JOURNEY —</p>
+                <h2 class="sub-title">How It All Started ⏳</h2>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Awal Ketemu</h3>
+                            <p>Momen pertama kali kita saling bertatap dan tersenyum. Awal dari segalanya.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>First Date</h3>
+                            <p>Rasa deg-degan bercampur bahagia, menghabiskan waktu berdua untuk pertama kalinya.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Second Date</h3>
+                            <p>Mulai merasa nyaman dan nggak mau jauh-jauh dari kamu.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h3>Our Moments</h3>
+                            <p>Melewati banyak tawa, canda, dan cerita indah bersama sampai detik ini. Aku sayang banget sama kamu!</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -216,9 +253,18 @@
                 <div id="modal-emoji" class="modal-emoji"></div>
                 <h2 id="modal-title" class="modal-title"></h2>
                 <p id="modal-text" class="modal-text"></p>
-                <button class="close-btn" onclick="closeModal()">Close &times;</button>
+                <button class="close-btn" onclick="closeModal('global-modal')">Close &times;</button>
             </div>
             <p class="modal-footer-text">— With love that never runs out 💕 —</p>
+        </div>
+
+        <!-- IMAGE MODAL -->
+        <div id="image-modal" class="modal-overlay">
+            <div class="glass-card modal-card image-modal-card">
+                <img id="modal-img" src="" alt="Memory">
+                <p id="modal-img-caption" class="modal-img-caption"></p>
+                <button class="close-btn" onclick="closeModal('image-modal')">Close &times;</button>
+            </div>
         </div>
 
     </div>

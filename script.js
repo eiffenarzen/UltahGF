@@ -149,6 +149,13 @@ function showCakeModal() {
     showModal('🎂', 'Happy Birthday!', 'The most special Salsa Sabria 🌸');
 }
 
-function closeModal() {
-    modal.classList.remove('active');
+function closeModal(id) {
+    document.getElementById(id || 'global-modal').classList.remove('active');
+}
+
+function showImageModal(src, caption) {
+    const imgModal = document.getElementById('image-modal');
+    document.getElementById('modal-img').src = src;
+    document.getElementById('modal-img-caption').innerText = caption;
+    imgModal.classList.add('active');
 }
