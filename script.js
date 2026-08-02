@@ -107,6 +107,17 @@ function openEnvelope() {
     }
 }
 
+// --- Typewriter Logic ---
+const typewriterText = "You are the most beautiful part of my life...";
+let typeIndex = 0;
+function typeWriter() {
+    if (typeIndex < typewriterText.length) {
+        document.getElementById("typewriter").innerHTML += typewriterText.charAt(typeIndex);
+        typeIndex++;
+        setTimeout(typeWriter, 100);
+    }
+}
+
 // --- Cake Logic ---
 function blowCandles() {
     const flame = document.getElementById('flame');
@@ -133,6 +144,10 @@ function blowCandles() {
                 bgMusic.volume = 0.5;
                 bgMusic.play().catch(e => console.log("Audio play failed."));
             }
+
+            // Start typewriter
+            setTimeout(typeWriter, 1000);
+
         }, 2000);
     }
 }
