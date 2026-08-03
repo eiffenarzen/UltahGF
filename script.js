@@ -73,9 +73,9 @@ function backspacePin() {
 
 function checkPin() {
     if (currentPin === CORRECT_PIN) {
-        // Correct PIN -> Go to Envelope
+        // Correct PIN -> Go to Music Player
         screenPin.classList.remove('active');
-        screenEnvelope.classList.add('active');
+        document.getElementById('screen-music').classList.add('active');
     } else {
         // Wrong PIN
         pinDotsContainer.classList.add('shake');
@@ -173,4 +173,91 @@ function showImageModal(src, caption) {
     document.getElementById('modal-img').src = src;
     document.getElementById('modal-img-caption').innerText = caption;
     imgModal.classList.add('active');
+}
+
+// --- Music Screen Logic ---
+function openEnvelopeFromMusic() {
+    document.getElementById('screen-music').classList.remove('active');
+    document.getElementById('screen-envelope').classList.add('active');
+}
+
+// --- Photobooth Logic ---
+let stream = null;
+
+async function openPhotobooth() {
+    const modal = document.getElementById('photobooth-modal');
+    modal.classList.add('active');
+    
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+        const video = document.getElementById('pb-video');
+        video.srcObject = stream;
+    } catch (err) {
+        alert("Gagal mengakses kamera! Pastikan Anda membukanya lewat koneksi aman (HTTPS) atau mengizinkan akses kamera.");
+    }
+}
+
+function closePhotobooth() {
+    document.getElementById('photobooth-modal').classList.remove('active');
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+    // Reset state
+    document.getElementById('pb-canvas').style.display = 'none';
+    document.getElementById('pb-video').style.display = 'block';
+    document.getElementById('btn-capture').classList.remove('hidden');
+    document.getElementById('btn-retake').classList.add('hidden');
+    document.getElementById('btn-save').classList.add('hidden');
+}
+
+function capturePhoto() {
+    const video = document.getElementById('pb-video');
+    const canvas = document.getElementById('pb-canvas');
+    const frame = document.getElementById('pb-frame');
+    
+    // Set canvas size to video size or container size
+    canvas.width = video.clientWidth;
+    canvas.height = video.clientHeight;
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Draw video (mirrored)
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    // Source width/height should match the video aspect ratio to avoid distortion, 
+    // but a simple drawImage stretches to fit. For a simple photobooth, this is okay.
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.restore();
+    
+    // Draw frame on top
+    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    
+    // UI changes
+    video.style.display = 'none';
+    canvas.style.display = 'block';
+    
+    document.getElementById('btn-capture').classList.add('hidden');
+    document.getElementById('btn-retake').classList.remove('hidden');
+    document.getElementById('btn-save').classList.remove('hidden');
+}
+
+function retakePhoto() {
+    document.getElementById('pb-video').style.display = 'block';
+    document.getElementById('pb-canvas').style.display = 'none';
+    
+    document.getElementById('btn-capture').classList.remove('hidden');
+    document.getElementById('btn-retake').classList.add('hidden');
+    document.getElementById('btn-save').classList.add('hidden');
+}
+
+function savePhoto() {
+    const canvas = document.getElementById('pb-canvas');
+    const dataUrl = canvas.toDataURL('image/png');
+    
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = 'Photobooth-Salsa.png';
+    a.click();
 }
