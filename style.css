@@ -363,14 +363,22 @@ body.scroll-active {
     margin: 30px 0 15px 0;
 }
 .typewriter-text {
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-style: italic;
     color: #ffb3c6;
-    height: 20px;
+    min-height: 20px;
     margin-bottom: 20px;
     border-right: 2px solid #ffb3c6;
-    white-space: nowrap;
-    overflow: hidden;
+    word-break: break-word;
+    margin-left: auto;
+    margin-right: auto;
+    display: inline-block;
+    animation: blink-caret 0.75s step-end infinite;
+}
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: #ffb3c6; }
+}
     margin-left: auto;
     margin-right: auto;
 }
@@ -819,20 +827,46 @@ body.scroll-active {
     width: 100%;
     margin-bottom: 20px;
 }
-.elegant-select {
-    width: 100%;
-    padding: 10px;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.1);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.2);
-    outline: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 0.9rem;
+.song-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
-.elegant-select option {
-    background: #4a1523;
+.song-item {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, border-color 0.3s;
+}
+.song-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+.song-item.active {
+    background: rgba(255, 117, 143, 0.2);
+    border-color: #ff758f;
+    transform: scale(1.02);
+}
+.song-icon {
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+.song-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+.song-name {
+    font-weight: bold;
     color: #fff;
+    font-size: 1rem;
+}
+.song-sub {
+    font-size: 0.75rem;
+    color: #ffb3c6;
 }
 .play-btn {
     background: #ffb3c6;
@@ -914,6 +948,16 @@ body.scroll-active {
    ============================================== */
 .photobooth-section {
     padding-bottom: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.center-btn-wrapper {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 .pb-card {
     padding: 20px;

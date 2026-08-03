@@ -176,10 +176,17 @@ function showImageModal(src, caption) {
 }
 
 // --- Music Screen Logic ---
+let selectedSongSrc = 'song.mp3';
+
+function selectSong(element, songSrc) {
+    document.querySelectorAll('.song-item').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    selectedSongSrc = songSrc;
+}
+
 function openEnvelopeFromMusic() {
     // Save chosen song
-    const selectedSong = document.getElementById('song-select').value;
-    bgMusic.src = selectedSong; // Update the audio source
+    bgMusic.src = selectedSongSrc; // Update the audio source
     bgMusic.load();
     
     document.getElementById('screen-music').classList.remove('active');
@@ -279,44 +286,80 @@ function takeSnapshot() {
 
 function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
-    const frame = new Image();
-    frame.src = "images/mentahanframe.jfif";
+    canvas.width = 1080;
+    canvas.height = 1920;
+    const ctx = canvas.getContext('2d');
     
-    frame.onload = () => {
-        // We set canvas to a fixed proportion for a vertical strip
-        canvas.width = 1080;
-        canvas.height = 1920;
-        const ctx = canvas.getContext('2d');
-        
-        // Draw frame first
-        ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-        
-        // The frame has 3 boxes. We will guess the coordinates.
-        // Usually: Box 1 (y: 15%), Box 2 (y: 43%), Box 3 (y: 71%)
-        // Width: 80% (x: 10%), Height: 25%
-        const boxX = canvas.width * 0.1;
-        const boxW = canvas.width * 0.8;
-        const boxH = canvas.height * 0.24;
-        const boxYs = [canvas.height * 0.15, canvas.height * 0.43, canvas.height * 0.71];
-        
-        photos.forEach((photoSrc, index) => {
-            const img = new Image();
-            img.src = photoSrc;
-            img.onload = () => {
-                // To insert it nicely without overlapping the frame borders too much if we guessed wrong,
-                // we can draw the photos ON TOP of the frame (since the frame is JFIF and has white boxes).
-                ctx.drawImage(img, boxX, boxYs[index], boxW, boxH);
+    // Draw background (dark red like the original frame)
+    ctx.fillStyle = "#6a0d20";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Add decorative text
+    ctx.fillStyle = "#ffb3c6";
+    ctx.font = "bold 80px 'Playfair Display', serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Favorite Person", canvas.width / 2, canvas.height * 0.95);
+    
+    // Add decorative emojis (stars, hearts)
+    ctx.font = "60px Arial";
+    ctx.fillText("⭐", 150, 150);
+    ctx.fillText("❤️", 900, 150);
+    ctx.fillText("🌸", 150, 1800);
+    ctx.fillText("✨", 900, 1800);
+    
+    // Calculate 3 boxes for photos
+    const boxX = canvas.width * 0.1;
+    const boxW = canvas.width * 0.8;
+    const boxH = canvas.height * 0.25;
+    const margin = canvas.height * 0.03;
+    
+    const totalBoxesHeight = (boxH * 3) + (margin * 2);
+    const startY = (canvas.height * 0.9 - totalBoxesHeight) / 2; // Vertically center above text
+    const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
+    
+    // Draw white polaroid borders
+    ctx.fillStyle = "#ffffff";
+    boxYs.forEach(y => {
+        ctx.fillRect(boxX - 15, y - 15, boxW + 30, boxH + 30);
+    });
+    
+    let loadedCount = 0;
+    photos.forEach((photoSrc, index) => {
+        const img = new Image();
+        img.src = photoSrc;
+        img.onload = () => {
+            // Draw photo with object-fit: cover logic to prevent squishing
+            const imgAspect = img.width / img.height;
+            const boxAspect = boxW / boxH;
+            
+            let drawW, drawH, drawX, drawY;
+            if (imgAspect > boxAspect) {
+                drawH = img.height;
+                drawW = img.height * boxAspect;
+                drawX = (img.width - drawW) / 2;
+                drawY = 0;
+            } else {
+                drawW = img.width;
+                drawH = img.width / boxAspect;
+                drawX = 0;
+                drawY = (img.height - drawH) / 2;
             }
-        });
-        
-        // UI changes
-        document.getElementById('pb-video').style.display = 'none';
-        canvas.style.display = 'block';
-        
-        document.getElementById('pb-instruction').innerText = "Looking good! ✨";
-        document.getElementById('btn-retake').classList.remove('hidden');
-        document.getElementById('btn-save').classList.remove('hidden');
-    };
+            
+            // Draw the cropped photo into the box
+            ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxYs[index], boxW, boxH);
+            
+            loadedCount++;
+            if (loadedCount === photos.length) {
+                // UI changes after all 3 are drawn
+                document.getElementById('pb-video').style.display = 'none';
+                canvas.style.display = 'block';
+                
+                document.getElementById('pb-instruction').innerText = "Looking good! ✨";
+                document.getElementById('btn-retake').classList.remove('hidden');
+                document.getElementById('btn-save').classList.remove('hidden');
+            }
+        }
+    });
 }
 
 function retakePhoto() {

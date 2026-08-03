@@ -75,13 +75,29 @@
                 </div>
                 <h2 class="music-title">Our Soundtrack</h2>
                 <p class="music-artist">Choose our song</p>
-                
-                <div class="song-selector">
-                    <select id="song-select" class="elegant-select">
-                        <option value="song.mp3">Shape of My Heart</option>
-                        <option value="song2.mp3">Song 2</option>
-                        <option value="song3.mp3">Song 3</option>
-                    </select>
+
+                <div class="song-list">
+                    <div class="song-item active" onclick="selectSong(this, 'song.mp3')">
+                        <span class="song-icon">🎵</span>
+                        <div class="song-info">
+                            <span class="song-name">Shape of My Heart</span>
+                            <span class="song-sub">Our Favorite</span>
+                        </div>
+                    </div>
+                    <div class="song-item" onclick="selectSong(this, 'song2.mp3')">
+                        <span class="song-icon">🎵</span>
+                        <div class="song-info">
+                            <span class="song-name">Beautiful in White</span>
+                            <span class="song-sub">Westlife</span>
+                        </div>
+                    </div>
+                    <div class="song-item" onclick="selectSong(this, 'song3.mp3')">
+                        <span class="song-icon">🎵</span>
+                        <div class="song-info">
+                            <span class="song-name">Perfect</span>
+                            <span class="song-sub">Ed Sheeran</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="music-controls">
@@ -306,9 +322,11 @@
                 <p class="tiny-heading">📸 Capture The Moment 📸</p>
                 <h2 class="sub-title">Let's take a selfie!</h2>
                 <p class="desc-text">Abadikan senyum manismu di hari spesial ini.</p>
-                <button class="action-btn vip-btn" onclick="openPhotobooth()">
-                    <span class="btn-icon">📸</span> Abadikan Momen
-                </button>
+                <div class="center-btn-wrapper">
+                    <button class="action-btn vip-btn" onclick="openPhotobooth()">
+                        <span class="btn-icon">📸</span> Abadikan Momen
+                    </button>
+                </div>
             </section>
 
             <!-- CAKE BUTTON -->
@@ -354,8 +372,10 @@
                     <canvas id="pb-canvas" style="display: none;"></canvas>
                 </div>
                 <div class="pb-controls">
-                    <button id="btn-capture" class="action-btn vip-btn" onclick="startPhotoboothSequence()">Mulai Foto 📸</button>
-                    <button id="btn-retake" class="action-btn secondary-btn hidden" onclick="retakePhoto()">Ulangi 🔄</button>
+                    <button id="btn-capture" class="action-btn vip-btn" onclick="startPhotoboothSequence()">Mulai Foto
+                        📸</button>
+                    <button id="btn-retake" class="action-btn secondary-btn hidden" onclick="retakePhoto()">Ulangi
+                        🔄</button>
                     <button id="btn-save" class="action-btn vip-btn hidden" onclick="savePhoto()">Simpan 💾</button>
                 </div>
                 <button class="close-btn" onclick="closePhotobooth()">Close &times;</button>
