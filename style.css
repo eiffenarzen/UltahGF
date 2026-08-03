@@ -967,49 +967,30 @@ body.scroll-active {
     flex-direction: column;
     align-items: center;
 }
-/* Container utama photobooth */
-.photobooth-container {
-  position: relative;
-  width: 100%;
-  max-width: 350px;
-  aspect-ratio: 9 / 16;
-  overflow: hidden;
-  border-radius: 12px;
-  margin: 0 auto 20px auto;
+.pb-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4; /* A decent ratio for selfie preview */
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
 }
-
-/* Layer 1 (Belakang): Tampilan Kamera Live */
-.photobooth-container video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-  transform: scaleX(-1);
+#pb-video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transform: scaleX(-1); /* Mirror camera */
 }
-
-/* Layer 2 (Depan): Frame PNG Transparan */
-.photobooth-container .frame-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  pointer-events: none;
-  z-index: 2;
-}
-
-/* Layer 3: Hasil akhir / canvas */
-.photobooth-container canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 3;
+#pb-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
 }
 .pb-controls {
     display: flex;

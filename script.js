@@ -203,10 +203,10 @@ async function openPhotobooth() {
     modal.classList.add('active');
     
     // Reset
-    document.getElementById('pb-instruction').innerText = "Get ready!";
+    photos = [];
+    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
     document.getElementById('pb-canvas').style.display = 'none';
     document.getElementById('pb-video').style.display = 'block';
-    document.getElementById('pb-frame').style.display = 'block';
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
@@ -233,11 +233,15 @@ async function startPhotoboothSequence() {
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
     
-    document.getElementById('pb-instruction').innerText = "Get ready!";
-    await countdown(3);
+    photos = [];
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById('pb-instruction').innerText = `Photo ${i} of 3`;
+        await countdown(3);
+        takeSnapshot();
+    }
     
-    document.getElementById('pb-instruction').innerText = "Generating your photo...";
-    setTimeout(captureSinglePhoto, 500);
+    document.getElementById('pb-instruction').innerText = "Generating your photobooth strip...";
+    setTimeout(renderFinalPhotobooth, 1000);
 }
 
 function countdown(seconds) {
@@ -264,59 +268,92 @@ function countdown(seconds) {
     });
 }
 
-function captureSinglePhoto() {
+function takeSnapshot() {
     const video = document.getElementById('pb-video');
-    const canvas = document.getElementById('pb-canvas');
-    const frame = document.getElementById('pb-frame');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = video.videoWidth;
+    tempCanvas.height = video.videoHeight;
+    const ctx = tempCanvas.getContext('2d');
     
-    // Set canvas size to match the frame image aspect ratio (1080x1920 is standard for 9:16)
-    canvas.width = 1080;
-    canvas.height = 1920;
-    const ctx = canvas.getContext('2d');
-    
-    // 1. Draw video (mirrored and object-fit cover equivalent)
-    ctx.save();
-    ctx.translate(canvas.width, 0);
+    // mirror
+    ctx.translate(tempCanvas.width, 0);
     ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
     
-    const videoAspect = video.videoWidth / video.videoHeight;
-    const canvasAspect = canvas.width / canvas.height;
+    photos.push(tempCanvas.toDataURL('image/png'));
+}
+
+function renderFinalPhotobooth() {
+    const canvas = document.getElementById('pb-canvas');
+    const frame = new Image();
+    frame.src = "images/frame-photoboth.png";
     
-    let drawW, drawH, drawX, drawY;
-    if (videoAspect > canvasAspect) {
-        drawH = canvas.height;
-        drawW = canvas.height * videoAspect;
-        drawX = (canvas.width - drawW) / 2;
-        drawY = 0;
-    } else {
-        drawW = canvas.width;
-        drawH = canvas.width / videoAspect;
-        drawX = 0;
-        drawY = (canvas.height - drawH) / 2;
-    }
-    
-    ctx.drawImage(video, drawX, drawY, drawW, drawH);
-    ctx.restore();
-    
-    // 2. Draw frame on top
-    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-    
-    // UI changes
-    video.style.display = 'none';
-    frame.style.display = 'none';
-    canvas.style.display = 'block';
-    
-    document.getElementById('pb-instruction').innerText = "Looking good! ✨";
-    document.getElementById('btn-capture').classList.add('hidden');
-    document.getElementById('btn-retake').classList.remove('hidden');
-    document.getElementById('btn-save').classList.remove('hidden');
+    frame.onload = () => {
+        canvas.width = 1080;
+        canvas.height = 1920;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw background white
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Estimate the 3 boxes for the frame
+        const boxX = canvas.width * 0.1;
+        const boxW = canvas.width * 0.8;
+        const boxH = canvas.height * 0.25;
+        const margin = canvas.height * 0.03;
+        
+        const totalBoxesHeight = (boxH * 3) + (margin * 2);
+        const startY = (canvas.height * 0.9 - totalBoxesHeight) / 2;
+        const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
+        
+        let loadedCount = 0;
+        photos.forEach((photoSrc, index) => {
+            const img = new Image();
+            img.src = photoSrc;
+            img.onload = () => {
+                // Object fit cover logic for the photos
+                const imgAspect = img.width / img.height;
+                const boxAspect = boxW / boxH;
+                
+                let drawW, drawH, drawX, drawY;
+                if (imgAspect > boxAspect) {
+                    drawH = img.height;
+                    drawW = img.height * boxAspect;
+                    drawX = (img.width - drawW) / 2;
+                    drawY = 0;
+                } else {
+                    drawW = img.width;
+                    drawH = img.width / boxAspect;
+                    drawX = 0;
+                    drawY = (img.height - drawH) / 2;
+                }
+                
+                // Draw photo
+                ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxYs[index], boxW, boxH);
+                
+                loadedCount++;
+                if (loadedCount === photos.length) {
+                    // Draw frame on top of all 3 photos!
+                    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+                    
+                    // Show canvas
+                    document.getElementById('pb-video').style.display = 'none';
+                    canvas.style.display = 'block';
+                    
+                    document.getElementById('pb-instruction').innerText = "Looking good! ✨";
+                    document.getElementById('btn-retake').classList.remove('hidden');
+                    document.getElementById('btn-save').classList.remove('hidden');
+                }
+            }
+        });
+    };
 }
 
 function retakePhoto() {
     document.getElementById('pb-video').style.display = 'block';
-    document.getElementById('pb-frame').style.display = 'block';
     document.getElementById('pb-canvas').style.display = 'none';
-    document.getElementById('pb-instruction').innerText = "Get ready!";
+    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
     
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
