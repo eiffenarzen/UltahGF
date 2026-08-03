@@ -204,7 +204,7 @@ async function openPhotobooth() {
 
     // Reset
     photos = [];
-    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
+    document.getElementById('pb-instruction').innerText = "Get ready!";
     document.getElementById('pb-canvas').style.display = 'none';
     document.getElementById('pb-video').style.display = 'block';
     document.getElementById('btn-capture').classList.remove('hidden');
@@ -234,13 +234,11 @@ async function startPhotoboothSequence() {
     document.getElementById('btn-save').classList.add('hidden');
 
     photos = [];
-    for (let i = 1; i <= 3; i++) {
-        document.getElementById('pb-instruction').innerText = `Photo ${i} of 3`;
-        await countdown(3);
-        takeSnapshot();
-    }
+    document.getElementById('pb-instruction').innerText = "Get ready!";
+    await countdown(3);
+    takeSnapshot();
 
-    document.getElementById('pb-instruction').innerText = "Generating your photobooth strip...";
+    document.getElementById('pb-instruction').innerText = "Generating your photo...";
     setTimeout(renderFinalPhotobooth, 1000);
 }
 
@@ -286,73 +284,60 @@ function takeSnapshot() {
 function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
     const frame = new Image();
-    frame.src = "images/mentahanframe1.png";
+    frame.src = "images/mentahanframe2.jpg";
 
     frame.onload = () => {
         canvas.width = 1080;
         canvas.height = 1920;
         const ctx = canvas.getContext('2d');
 
-        // Draw background white
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Draw background frame first (karena ini JPG dan greenscreennya solid)
+        ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 
-        // Estimate the 3 boxes for the frame
-        const boxX = canvas.width * 0.17;
-        const boxW = canvas.width * 0.77;
-        const boxH = canvas.height * 0.235;
-        const margin = canvas.height * 0.022;
+        // Koordinat area greenscreen (Silakan disesuaikan ukurannya)
+        const boxX = canvas.width * 0.10;
+        const boxY = canvas.height * 0.15;
+        const boxW = canvas.width * 0.80;
+        const boxH = canvas.height * 0.70;
 
-        const startY = canvas.height * 0.082;
-        const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
+        const img = new Image();
+        img.src = photos[0];
+        img.onload = () => {
+            // Object fit cover logic for the photo
+            const imgAspect = img.width / img.height;
+            const boxAspect = boxW / boxH;
 
-        let loadedCount = 0;
-        photos.forEach((photoSrc, index) => {
-            const img = new Image();
-            img.src = photoSrc;
-            img.onload = () => {
-                // Object fit cover logic for the photos
-                const imgAspect = img.width / img.height;
-                const boxAspect = boxW / boxH;
-
-                let drawW, drawH, drawX, drawY;
-                if (imgAspect > boxAspect) {
-                    drawH = img.height;
-                    drawW = img.height * boxAspect;
-                    drawX = (img.width - drawW) / 2;
-                    drawY = 0;
-                } else {
-                    drawW = img.width;
-                    drawH = img.width / boxAspect;
-                    drawX = 0;
-                    drawY = (img.height - drawH) / 2;
-                }
-
-                // Draw photo
-                ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxYs[index], boxW, boxH);
-
-                loadedCount++;
-                if (loadedCount === photos.length) {
-                    // Draw frame on top of all 3 photos!
-                    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-
-                    // Show canvas
-                    document.getElementById('pb-video').style.display = 'none';
-                    canvas.style.display = 'block';
-
-                    document.getElementById('pb-instruction').innerText = "Looking good! ✨";
-                    document.getElementById('btn-retake').classList.remove('hidden');
-                    document.getElementById('btn-save').classList.remove('hidden');
-                }
+            let drawW, drawH, drawX, drawY;
+            if (imgAspect > boxAspect) {
+                drawH = img.height;
+                drawW = img.height * boxAspect;
+                drawX = (img.width - drawW) / 2;
+                drawY = 0;
+            } else {
+                drawW = img.width;
+                drawH = img.width / boxAspect;
+                drawX = 0;
+                drawY = (img.height - drawH) / 2;
             }
-        });
+
+            // Draw photo DI ATAS area greenscreen
+            ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxY, boxW, boxH);
+
+            // Show canvas
+            document.getElementById('pb-video').style.display = 'none';
+            canvas.style.display = 'block';
+
+            document.getElementById('pb-instruction').innerText = "Looking good! ✨";
+            document.getElementById('btn-retake').classList.remove('hidden');
+            document.getElementById('btn-save').classList.remove('hidden');
+        }
     };
 }
 
 function retakePhoto() {
     document.getElementById('pb-video').style.display = 'block';
     document.getElementById('pb-canvas').style.display = 'none';
-    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
+    document.getElementById('pb-instruction').innerText = "Get ready!";
 
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
