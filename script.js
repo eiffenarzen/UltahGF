@@ -286,7 +286,7 @@ function takeSnapshot() {
 function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
     const frame = new Image();
-    frame.src = "images/mentahanframe.png";
+    frame.src = "images/mentahanframe1.png";
 
     frame.onload = () => {
         canvas.width = 1080;
