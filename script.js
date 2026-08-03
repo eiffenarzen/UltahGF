@@ -20,18 +20,18 @@ let currentPin = "";
 function createFloatingElements() {
     const bgContainer = document.getElementById('bg-elements');
     const emojis = ['🌸', '✨', '💖', '🌺'];
-    
-    for(let i=0; i<15; i++) {
+
+    for (let i = 0; i < 15; i++) {
         const el = document.createElement('div');
         el.classList.add('floating-emoji');
         el.innerText = emojis[Math.floor(Math.random() * emojis.length)];
-        
+
         el.style.left = Math.random() * 100 + 'vw';
-        
+
         const duration = Math.random() * 10 + 10; // 10s to 20s
         el.style.animationDuration = duration + 's';
         el.style.animationDelay = Math.random() * 10 + 's';
-        
+
         bgContainer.appendChild(el);
     }
 }
@@ -52,7 +52,7 @@ function pressKey(num) {
     if (currentPin.length < 6) {
         currentPin += num;
         updateDots();
-        
+
         if (currentPin.length === 6) {
             setTimeout(checkPin, 300);
         }
@@ -89,9 +89,9 @@ function checkPin() {
 // --- Envelope Logic ---
 function openEnvelope() {
     const envelope = document.querySelector('.envelope');
-    if(!envelope.classList.contains('open')) {
+    if (!envelope.classList.contains('open')) {
         envelope.classList.add('open');
-        
+
         // Throw confetti
         confetti({
             particleCount: 100,
@@ -121,9 +121,9 @@ function typeWriter() {
 // --- Cake Logic ---
 function blowCandles() {
     const flame = document.getElementById('flame');
-    if(!flame.classList.contains('out')) {
+    if (!flame.classList.contains('out')) {
         flame.classList.add('out');
-        
+
         // Throw confetti
         confetti({
             particleCount: 150,
@@ -135,10 +135,10 @@ function blowCandles() {
         setTimeout(() => {
             screenCake.classList.remove('active');
             screenMain.classList.add('active');
-            
+
             // Enable scrolling
             document.body.classList.add('scroll-active');
-            
+
             // Play music
             if (bgMusic.paused) {
                 bgMusic.volume = 0.5;
@@ -188,7 +188,7 @@ function openEnvelopeFromMusic() {
     // Save chosen song
     bgMusic.src = selectedSongSrc; // Update the audio source
     bgMusic.load();
-    
+
     document.getElementById('screen-music').classList.remove('active');
     document.getElementById('screen-envelope').classList.add('active');
 }
@@ -201,7 +201,7 @@ let captureCount = 0;
 async function openPhotobooth() {
     const modal = document.getElementById('photobooth-modal');
     modal.classList.add('active');
-    
+
     // Reset
     photos = [];
     document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
@@ -210,7 +210,7 @@ async function openPhotobooth() {
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
-    
+
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         const video = document.getElementById('pb-video');
@@ -232,14 +232,14 @@ async function startPhotoboothSequence() {
     document.getElementById('btn-capture').classList.add('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
-    
+
     photos = [];
     for (let i = 1; i <= 3; i++) {
         document.getElementById('pb-instruction').innerText = `Photo ${i} of 3`;
         await countdown(3);
         takeSnapshot();
     }
-    
+
     document.getElementById('pb-instruction').innerText = "Generating your photobooth strip...";
     setTimeout(renderFinalPhotobooth, 1000);
 }
@@ -250,7 +250,7 @@ function countdown(seconds) {
         cdElement.classList.remove('hidden');
         let counter = seconds;
         cdElement.innerText = counter;
-        
+
         const interval = setInterval(() => {
             counter--;
             if (counter > 0) {
@@ -274,39 +274,39 @@ function takeSnapshot() {
     tempCanvas.width = video.videoWidth;
     tempCanvas.height = video.videoHeight;
     const ctx = tempCanvas.getContext('2d');
-    
+
     // mirror
     ctx.translate(tempCanvas.width, 0);
     ctx.scale(-1, 1);
     ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-    
+
     photos.push(tempCanvas.toDataURL('image/png'));
 }
 
 function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
     const frame = new Image();
-    frame.src = "images/frame-photoboth.png";
-    
+    frame.src = "images/mentahanframe.png";
+
     frame.onload = () => {
         canvas.width = 1080;
         canvas.height = 1920;
         const ctx = canvas.getContext('2d');
-        
+
         // Draw background white
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Estimate the 3 boxes for the frame
-        const boxX = canvas.width * 0.1;
-        const boxW = canvas.width * 0.8;
-        const boxH = canvas.height * 0.25;
-        const margin = canvas.height * 0.03;
-        
+        const boxX = canvas.width * 0.14;
+        const boxW = canvas.width * 0.72;
+        const boxH = canvas.height * 0.23;
+        const margin = canvas.height * 0.04;
+
         const totalBoxesHeight = (boxH * 3) + (margin * 2);
         const startY = (canvas.height * 0.9 - totalBoxesHeight) / 2;
         const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
-        
+
         let loadedCount = 0;
         photos.forEach((photoSrc, index) => {
             const img = new Image();
@@ -315,7 +315,7 @@ function renderFinalPhotobooth() {
                 // Object fit cover logic for the photos
                 const imgAspect = img.width / img.height;
                 const boxAspect = boxW / boxH;
-                
+
                 let drawW, drawH, drawX, drawY;
                 if (imgAspect > boxAspect) {
                     drawH = img.height;
@@ -328,19 +328,19 @@ function renderFinalPhotobooth() {
                     drawX = 0;
                     drawY = (img.height - drawH) / 2;
                 }
-                
+
                 // Draw photo
                 ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxYs[index], boxW, boxH);
-                
+
                 loadedCount++;
                 if (loadedCount === photos.length) {
                     // Draw frame on top of all 3 photos!
                     ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-                    
+
                     // Show canvas
                     document.getElementById('pb-video').style.display = 'none';
                     canvas.style.display = 'block';
-                    
+
                     document.getElementById('pb-instruction').innerText = "Looking good! ✨";
                     document.getElementById('btn-retake').classList.remove('hidden');
                     document.getElementById('btn-save').classList.remove('hidden');
@@ -354,7 +354,7 @@ function retakePhoto() {
     document.getElementById('pb-video').style.display = 'block';
     document.getElementById('pb-canvas').style.display = 'none';
     document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
-    
+
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
@@ -363,7 +363,7 @@ function retakePhoto() {
 function savePhoto() {
     const canvas = document.getElementById('pb-canvas');
     const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-    
+
     const a = document.createElement('a');
     a.href = dataUrl;
     a.download = 'Photobooth-Salsa.jpg';
