@@ -238,8 +238,8 @@ async function startPhotoboothSequence() {
     await countdown(3);
     takeSnapshot();
 
-    document.getElementById('pb-instruction').innerText = "Generating your photo...";
-    setTimeout(renderFinalPhotobooth, 1000);
+    document.getElementById('pb-instruction').innerText = "Processing greenscreen...";
+    setTimeout(renderFinalPhotobooth, 300);
 }
 
 function countdown(seconds) {
@@ -283,55 +283,89 @@ function takeSnapshot() {
 
 function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
-    const frame = new Image();
-    frame.src = "images/mentahanframe2.jpg";
+    const ctx = canvas.getContext('2d');
 
-    frame.onload = () => {
-        canvas.width = 1080;
-        canvas.height = 1920;
-        const ctx = canvas.getContext('2d');
+    canvas.width = 1080;
+    canvas.height = 1920;
 
-        // Draw background frame first (karena ini JPG dan greenscreennya solid)
-        ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    const userImg = new Image();
+    const frameImg = new Image();
 
-        // Koordinat area greenscreen (Silakan disesuaikan ukurannya)
-        const boxX = canvas.width * 0.10;
-        const boxY = canvas.height * 0.15;
-        const boxW = canvas.width * 0.80;
-        const boxH = canvas.height * 0.70;
+    // 1. Load Foto Hasil Cekrek Dulu
+    userImg.onload = () => {
+        // 2. Load Gambar Frame
+        frameImg.onload = () => {
+            // --- A. GAMBAR FOTO USER DI PALING BAWAH ---
+            // Koordinat area foto kamu di dalam canvas 1080x1920
+            const boxX = canvas.width * 0.10;
+            const boxY = canvas.height * 0.15;
+            const boxW = canvas.width * 0.80;
+            const boxH = canvas.height * 0.70;
 
-        const img = new Image();
-        img.src = photos[0];
-        img.onload = () => {
-            // Object fit cover logic for the photo
-            const imgAspect = img.width / img.height;
+            // Crop Cover Logic biar foto gak gepeng
+            const imgAspect = userImg.width / userImg.height;
             const boxAspect = boxW / boxH;
-
             let drawW, drawH, drawX, drawY;
+
             if (imgAspect > boxAspect) {
-                drawH = img.height;
-                drawW = img.height * boxAspect;
-                drawX = (img.width - drawW) / 2;
+                drawH = userImg.height;
+                drawW = userImg.height * boxAspect;
+                drawX = (userImg.width - drawW) / 2;
                 drawY = 0;
             } else {
-                drawW = img.width;
-                drawH = img.width / boxAspect;
+                drawW = userImg.width;
+                drawH = userImg.width / boxAspect;
                 drawX = 0;
-                drawY = (img.height - drawH) / 2;
+                drawY = (userImg.height - drawH) / 2;
             }
 
-            // Draw photo DI ATAS area greenscreen
-            ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxY, boxW, boxH);
+            // Draw Foto User
+            ctx.drawImage(userImg, drawX, drawY, drawW, drawH, boxX, boxY, boxW, boxH);
 
-            // Show canvas
+            // --- B. PROSES CHROMA KEY (Hapus Greenscreen dari Frame) ---
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            const tempCtx = tempCanvas.getContext('2d');
+
+            // Draw Frame ke Temp Canvas
+            tempCtx.drawImage(frameImg, 0, 0, canvas.width, canvas.height);
+
+            // Ambil data semua piksel frame
+            const imgData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imgData.data;
+
+            // Loop untuk cek warna hijau dan jadikan transparan
+            for (let i = 0; i < data.length; i += 4) {
+                const red = data[i];
+                const green = data[i + 1];
+                const blue = data[i + 2];
+
+                // Deteksi jika dominan warna HIJAU (Chroma Key)
+                if (green > 100 && red < 150 && blue < 150 && green > red * 1.2) {
+                    data[i + 3] = 0; // Set Alpha/Transparansi jadi 0 (Bening)
+                }
+            }
+
+            // Masukkan kembali frame yang sudah di-bolongin
+            tempCtx.putImageData(imgData, 0, 0);
+
+            // --- C. TIMPA FRAME TRANSPARAN DI ATAS FOTO USER ---
+            ctx.drawImage(tempCanvas, 0, 0);
+
+            // Tampilkan Hasil
             document.getElementById('pb-video').style.display = 'none';
             canvas.style.display = 'block';
 
             document.getElementById('pb-instruction').innerText = "Looking good! ✨";
             document.getElementById('btn-retake').classList.remove('hidden');
             document.getElementById('btn-save').classList.remove('hidden');
-        }
+        };
+
+        frameImg.src = "images/mentahanframe2.jpg";
     };
+
+    userImg.src = photos[0];
 }
 
 function retakePhoto() {
