@@ -203,11 +203,10 @@ async function openPhotobooth() {
     modal.classList.add('active');
     
     // Reset
-    photos = [];
-    captureCount = 0;
-    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
+    document.getElementById('pb-instruction').innerText = "Get ready!";
     document.getElementById('pb-canvas').style.display = 'none';
     document.getElementById('pb-video').style.display = 'block';
+    document.getElementById('pb-frame').style.display = 'block';
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
@@ -234,15 +233,11 @@ async function startPhotoboothSequence() {
     document.getElementById('btn-retake').classList.add('hidden');
     document.getElementById('btn-save').classList.add('hidden');
     
-    photos = [];
-    for (let i = 1; i <= 3; i++) {
-        document.getElementById('pb-instruction').innerText = `Photo ${i} of 3`;
-        await countdown(3);
-        takeSnapshot();
-    }
+    document.getElementById('pb-instruction').innerText = "Get ready!";
+    await countdown(3);
     
-    document.getElementById('pb-instruction').innerText = "Generating your photobooth strip...";
-    setTimeout(renderFinalPhotobooth, 1000);
+    document.getElementById('pb-instruction').innerText = "Generating your photo...";
+    setTimeout(captureSinglePhoto, 500);
 }
 
 function countdown(seconds) {
@@ -269,103 +264,59 @@ function countdown(seconds) {
     });
 }
 
-function takeSnapshot() {
+function captureSinglePhoto() {
     const video = document.getElementById('pb-video');
-    const tempCanvas = document.createElement('canvas');
-    tempCanvas.width = video.videoWidth;
-    tempCanvas.height = video.videoHeight;
-    const ctx = tempCanvas.getContext('2d');
-    
-    // mirror
-    ctx.translate(tempCanvas.width, 0);
-    ctx.scale(-1, 1);
-    ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
-    
-    photos.push(tempCanvas.toDataURL('image/png'));
-}
-
-function renderFinalPhotobooth() {
     const canvas = document.getElementById('pb-canvas');
+    const frame = document.getElementById('pb-frame');
+    
+    // Set canvas size to match the frame image aspect ratio (1080x1920 is standard for 9:16)
     canvas.width = 1080;
     canvas.height = 1920;
     const ctx = canvas.getContext('2d');
     
-    // Draw background (dark red like the original frame)
-    ctx.fillStyle = "#6a0d20";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    // 1. Draw video (mirrored and object-fit cover equivalent)
+    ctx.save();
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
     
-    // Add decorative text
-    ctx.fillStyle = "#ffb3c6";
-    ctx.font = "bold 80px 'Playfair Display', serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Favorite Person", canvas.width / 2, canvas.height * 0.95);
+    const videoAspect = video.videoWidth / video.videoHeight;
+    const canvasAspect = canvas.width / canvas.height;
     
-    // Add decorative emojis (stars, hearts)
-    ctx.font = "60px Arial";
-    ctx.fillText("⭐", 150, 150);
-    ctx.fillText("❤️", 900, 150);
-    ctx.fillText("🌸", 150, 1800);
-    ctx.fillText("✨", 900, 1800);
+    let drawW, drawH, drawX, drawY;
+    if (videoAspect > canvasAspect) {
+        drawH = canvas.height;
+        drawW = canvas.height * videoAspect;
+        drawX = (canvas.width - drawW) / 2;
+        drawY = 0;
+    } else {
+        drawW = canvas.width;
+        drawH = canvas.width / videoAspect;
+        drawX = 0;
+        drawY = (canvas.height - drawH) / 2;
+    }
     
-    // Calculate 3 boxes for photos
-    const boxX = canvas.width * 0.1;
-    const boxW = canvas.width * 0.8;
-    const boxH = canvas.height * 0.25;
-    const margin = canvas.height * 0.03;
+    ctx.drawImage(video, drawX, drawY, drawW, drawH);
+    ctx.restore();
     
-    const totalBoxesHeight = (boxH * 3) + (margin * 2);
-    const startY = (canvas.height * 0.9 - totalBoxesHeight) / 2; // Vertically center above text
-    const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
+    // 2. Draw frame on top
+    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
     
-    // Draw white polaroid borders
-    ctx.fillStyle = "#ffffff";
-    boxYs.forEach(y => {
-        ctx.fillRect(boxX - 15, y - 15, boxW + 30, boxH + 30);
-    });
+    // UI changes
+    video.style.display = 'none';
+    frame.style.display = 'none';
+    canvas.style.display = 'block';
     
-    let loadedCount = 0;
-    photos.forEach((photoSrc, index) => {
-        const img = new Image();
-        img.src = photoSrc;
-        img.onload = () => {
-            // Draw photo with object-fit: cover logic to prevent squishing
-            const imgAspect = img.width / img.height;
-            const boxAspect = boxW / boxH;
-            
-            let drawW, drawH, drawX, drawY;
-            if (imgAspect > boxAspect) {
-                drawH = img.height;
-                drawW = img.height * boxAspect;
-                drawX = (img.width - drawW) / 2;
-                drawY = 0;
-            } else {
-                drawW = img.width;
-                drawH = img.width / boxAspect;
-                drawX = 0;
-                drawY = (img.height - drawH) / 2;
-            }
-            
-            // Draw the cropped photo into the box
-            ctx.drawImage(img, drawX, drawY, drawW, drawH, boxX, boxYs[index], boxW, boxH);
-            
-            loadedCount++;
-            if (loadedCount === photos.length) {
-                // UI changes after all 3 are drawn
-                document.getElementById('pb-video').style.display = 'none';
-                canvas.style.display = 'block';
-                
-                document.getElementById('pb-instruction').innerText = "Looking good! ✨";
-                document.getElementById('btn-retake').classList.remove('hidden');
-                document.getElementById('btn-save').classList.remove('hidden');
-            }
-        }
-    });
+    document.getElementById('pb-instruction').innerText = "Looking good! ✨";
+    document.getElementById('btn-capture').classList.add('hidden');
+    document.getElementById('btn-retake').classList.remove('hidden');
+    document.getElementById('btn-save').classList.remove('hidden');
 }
 
 function retakePhoto() {
     document.getElementById('pb-video').style.display = 'block';
+    document.getElementById('pb-frame').style.display = 'block';
     document.getElementById('pb-canvas').style.display = 'none';
-    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
+    document.getElementById('pb-instruction').innerText = "Get ready!";
     
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
