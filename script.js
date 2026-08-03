@@ -298,13 +298,12 @@ function renderFinalPhotobooth() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Estimate the 3 boxes for the frame
-        const boxX = canvas.width * 0.14;
-        const boxW = canvas.width * 0.72;
-        const boxH = canvas.height * 0.23;
-        const margin = canvas.height * 0.04;
+        const boxX = canvas.width * 0.17;
+        const boxW = canvas.width * 0.77;
+        const boxH = canvas.height * 0.235;
+        const margin = canvas.height * 0.022;
 
-        const totalBoxesHeight = (boxH * 3) + (margin * 2);
-        const startY = (canvas.height * 0.9 - totalBoxesHeight) / 2;
+        const startY = canvas.height * 0.082;
         const boxYs = [startY, startY + boxH + margin, startY + (boxH * 2) + (margin * 2)];
 
         let loadedCount = 0;
