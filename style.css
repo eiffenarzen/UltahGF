@@ -6,13 +6,13 @@
 
 body {
     font-family: 'Quicksand', sans-serif;
-    background-color: #140d1a; /* Dark Amethyst */
+    background-color: #3f1d2f; /* Dark burgundy */
     color: #f7e6eb;
     height: 100vh;
     overflow: hidden; 
     position: relative;
     /* Soft gradient background */
-    background: radial-gradient(circle at center, #2d1f3f 0%, #140d1a 100%);
+    background: radial-gradient(circle at center, #562940 0%, #3f1d2f 100%);
 }
 
 /* Enable scrolling only on main screen */
