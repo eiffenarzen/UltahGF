@@ -177,23 +177,40 @@ function showImageModal(src, caption) {
 
 // --- Music Screen Logic ---
 function openEnvelopeFromMusic() {
+    // Save chosen song
+    const selectedSong = document.getElementById('song-select').value;
+    bgMusic.src = selectedSong; // Update the audio source
+    bgMusic.load();
+    
     document.getElementById('screen-music').classList.remove('active');
     document.getElementById('screen-envelope').classList.add('active');
 }
 
 // --- Photobooth Logic ---
 let stream = null;
+let photos = [];
+let captureCount = 0;
 
 async function openPhotobooth() {
     const modal = document.getElementById('photobooth-modal');
     modal.classList.add('active');
+    
+    // Reset
+    photos = [];
+    captureCount = 0;
+    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
+    document.getElementById('pb-canvas').style.display = 'none';
+    document.getElementById('pb-video').style.display = 'block';
+    document.getElementById('btn-capture').classList.remove('hidden');
+    document.getElementById('btn-retake').classList.add('hidden');
+    document.getElementById('btn-save').classList.add('hidden');
     
     try {
         stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
         const video = document.getElementById('pb-video');
         video.srcObject = stream;
     } catch (err) {
-        alert("Gagal mengakses kamera! Pastikan Anda membukanya lewat koneksi aman (HTTPS) atau mengizinkan akses kamera.");
+        alert("Gagal mengakses kamera! Pastikan Anda membukanya lewat koneksi aman (HTTPS).");
     }
 }
 
@@ -203,49 +220,109 @@ function closePhotobooth() {
         stream.getTracks().forEach(track => track.stop());
         stream = null;
     }
-    // Reset state
-    document.getElementById('pb-canvas').style.display = 'none';
-    document.getElementById('pb-video').style.display = 'block';
-    document.getElementById('btn-capture').classList.remove('hidden');
-    document.getElementById('btn-retake').classList.add('hidden');
-    document.getElementById('btn-save').classList.add('hidden');
 }
 
-function capturePhoto() {
-    const video = document.getElementById('pb-video');
-    const canvas = document.getElementById('pb-canvas');
-    const frame = document.getElementById('pb-frame');
-    
-    // Set canvas size to video size or container size
-    canvas.width = video.clientWidth;
-    canvas.height = video.clientHeight;
-    
-    const ctx = canvas.getContext('2d');
-    
-    // Draw video (mirrored)
-    ctx.save();
-    ctx.translate(canvas.width, 0);
-    ctx.scale(-1, 1);
-    // Source width/height should match the video aspect ratio to avoid distortion, 
-    // but a simple drawImage stretches to fit. For a simple photobooth, this is okay.
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    ctx.restore();
-    
-    // Draw frame on top
-    ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-    
-    // UI changes
-    video.style.display = 'none';
-    canvas.style.display = 'block';
-    
+async function startPhotoboothSequence() {
     document.getElementById('btn-capture').classList.add('hidden');
-    document.getElementById('btn-retake').classList.remove('hidden');
-    document.getElementById('btn-save').classList.remove('hidden');
+    document.getElementById('btn-retake').classList.add('hidden');
+    document.getElementById('btn-save').classList.add('hidden');
+    
+    photos = [];
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById('pb-instruction').innerText = `Photo ${i} of 3`;
+        await countdown(3);
+        takeSnapshot();
+    }
+    
+    document.getElementById('pb-instruction').innerText = "Generating your photobooth strip...";
+    setTimeout(renderFinalPhotobooth, 1000);
+}
+
+function countdown(seconds) {
+    return new Promise(resolve => {
+        const cdElement = document.getElementById('pb-countdown');
+        cdElement.classList.remove('hidden');
+        let counter = seconds;
+        cdElement.innerText = counter;
+        
+        const interval = setInterval(() => {
+            counter--;
+            if (counter > 0) {
+                cdElement.innerText = counter;
+            } else {
+                clearInterval(interval);
+                cdElement.classList.add('hidden');
+                // flash effect
+                const video = document.getElementById('pb-video');
+                video.style.opacity = '0';
+                setTimeout(() => video.style.opacity = '1', 100);
+                resolve();
+            }
+        }, 1000);
+    });
+}
+
+function takeSnapshot() {
+    const video = document.getElementById('pb-video');
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = video.videoWidth;
+    tempCanvas.height = video.videoHeight;
+    const ctx = tempCanvas.getContext('2d');
+    
+    // mirror
+    ctx.translate(tempCanvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+    
+    photos.push(tempCanvas.toDataURL('image/png'));
+}
+
+function renderFinalPhotobooth() {
+    const canvas = document.getElementById('pb-canvas');
+    const frame = new Image();
+    frame.src = "images/mentahanframe.jfif";
+    
+    frame.onload = () => {
+        // We set canvas to a fixed proportion for a vertical strip
+        canvas.width = 1080;
+        canvas.height = 1920;
+        const ctx = canvas.getContext('2d');
+        
+        // Draw frame first
+        ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+        
+        // The frame has 3 boxes. We will guess the coordinates.
+        // Usually: Box 1 (y: 15%), Box 2 (y: 43%), Box 3 (y: 71%)
+        // Width: 80% (x: 10%), Height: 25%
+        const boxX = canvas.width * 0.1;
+        const boxW = canvas.width * 0.8;
+        const boxH = canvas.height * 0.24;
+        const boxYs = [canvas.height * 0.15, canvas.height * 0.43, canvas.height * 0.71];
+        
+        photos.forEach((photoSrc, index) => {
+            const img = new Image();
+            img.src = photoSrc;
+            img.onload = () => {
+                // To insert it nicely without overlapping the frame borders too much if we guessed wrong,
+                // we can draw the photos ON TOP of the frame (since the frame is JFIF and has white boxes).
+                ctx.drawImage(img, boxX, boxYs[index], boxW, boxH);
+            }
+        });
+        
+        // UI changes
+        document.getElementById('pb-video').style.display = 'none';
+        canvas.style.display = 'block';
+        
+        document.getElementById('pb-instruction').innerText = "Looking good! ✨";
+        document.getElementById('btn-retake').classList.remove('hidden');
+        document.getElementById('btn-save').classList.remove('hidden');
+    };
 }
 
 function retakePhoto() {
     document.getElementById('pb-video').style.display = 'block';
     document.getElementById('pb-canvas').style.display = 'none';
+    document.getElementById('pb-instruction').innerText = "Get ready for 3 selfies!";
     
     document.getElementById('btn-capture').classList.remove('hidden');
     document.getElementById('btn-retake').classList.add('hidden');
@@ -254,10 +331,10 @@ function retakePhoto() {
 
 function savePhoto() {
     const canvas = document.getElementById('pb-canvas');
-    const dataUrl = canvas.toDataURL('image/png');
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
     
     const a = document.createElement('a');
     a.href = dataUrl;
-    a.download = 'Photobooth-Salsa.png';
+    a.download = 'Photobooth-Salsa.jpg';
     a.click();
 }
