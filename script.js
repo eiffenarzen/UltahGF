@@ -362,7 +362,7 @@ function renderFinalPhotobooth() {
             document.getElementById('btn-save').classList.remove('hidden');
         };
 
-        frameImg.src = "images/mentahanframe2.jpg";
+        frameImg.src = "images/mentahanframe4.jpg";
     };
 
     userImg.src = photos[0];
