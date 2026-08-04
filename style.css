@@ -6,10 +6,11 @@
 
 body {
     font-family: 'Quicksand', sans-serif;
-    background-color: #3f1d2f; /* Dark burgundy */
+    background-color: #3f1d2f;
+    /* Dark burgundy */
     color: #f7e6eb;
     height: 100vh;
-    overflow: hidden; 
+    overflow: hidden;
     position: relative;
     /* Soft gradient background */
     background: radial-gradient(circle at center, #562940 0%, #3f1d2f 100%);
@@ -29,7 +30,8 @@ canvas {
 
 #mobile-container {
     width: 100%;
-    max-width: 480px; /* Mobile width */
+    max-width: 480px;
+    /* Mobile width */
     height: 100%;
     margin: 0 auto;
     position: relative;
@@ -39,29 +41,49 @@ canvas {
 /* Background Elements */
 .bg-elements {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
     z-index: 1;
     overflow: hidden;
 }
+
 .floating-emoji {
     position: absolute;
     opacity: 0.3;
     animation: floatUp 15s linear infinite;
     font-size: 1.2rem;
 }
+
 @keyframes floatUp {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.4; }
-    90% { opacity: 0.4; }
-    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.4;
+    }
+
+    90% {
+        opacity: 0.4;
+    }
+
+    100% {
+        transform: translateY(-100px) rotate(360deg);
+        opacity: 0;
+    }
 }
 
 /* Screens */
 .screen {
     position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100vh;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -70,16 +92,18 @@ canvas {
     pointer-events: none;
     transition: opacity 1s ease-in-out;
 }
+
 .screen.active {
     opacity: 1;
     pointer-events: all;
     z-index: 20;
 }
+
 .screen.scrollable {
     position: absolute;
     height: auto;
     min-height: 100vh;
-    display: block; 
+    display: block;
 }
 
 /* Glassmorphism Generic */
@@ -98,6 +122,7 @@ canvas {
 #screen-pin {
     padding: 20px;
 }
+
 .pin-card {
     width: 100%;
     padding: 40px 20px;
@@ -105,54 +130,63 @@ canvas {
     flex-direction: column;
     align-items: center;
 }
+
 .pin-title {
     font-family: 'Playfair Display', serif;
     font-size: 2rem;
     font-weight: 400;
     margin-bottom: 5px;
 }
+
 .pin-subtitle {
     font-size: 0.9rem;
     opacity: 0.7;
     margin-bottom: 30px;
 }
+
 .pin-dots {
     display: flex;
     gap: 15px;
     margin-bottom: 40px;
 }
+
 .pin-dots .dot {
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     background: transparent;
     transition: background 0.2s;
 }
+
 .pin-dots .dot.filled {
     background-image: linear-gradient(#fff, #fff);
     background-color: transparent !important;
     border-color: #fff;
 }
+
 .pin-dots.shake {
-    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    animation: shake 0.4s cubic-bezier(.36, .07, .19, .97) both;
 }
+
 .pin-dots.shake .dot {
     background: #ff4d6d;
     border-color: #ff4d6d;
 }
+
 .keypad {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px 30px;
     margin-bottom: 30px;
 }
+
 .key {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     font-size: 1.5rem;
     font-family: 'Playfair Display', serif;
@@ -162,24 +196,45 @@ canvas {
     align-items: center;
     transition: background 0.2s;
 }
+
 .key:active {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
+
 .action-key {
     font-family: sans-serif;
     font-size: 1.2rem;
     background: transparent;
     border: none;
 }
+
 .pin-hint {
     font-size: 0.8rem;
     opacity: 0.5;
 }
+
 @keyframes shake {
-    10%, 90% { transform: translate3d(-2px, 0, 0); }
-    20%, 80% { transform: translate3d(4px, 0, 0); }
-    30%, 50%, 70% { transform: translate3d(-8px, 0, 0); }
-    40%, 60% { transform: translate3d(8px, 0, 0); }
+
+    10%,
+    90% {
+        transform: translate3d(-2px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(4px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-8px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(8px, 0, 0);
+    }
 }
 
 /* ==============================================
@@ -194,9 +249,11 @@ canvas {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease;
 }
+
 .envelope:hover {
     transform: translateY(-10px);
 }
+
 .envelope .flap {
     position: absolute;
     top: 0;
@@ -210,9 +267,11 @@ canvas {
     transition: transform 0.5s ease;
     transform-origin: top;
 }
+
 .envelope.open .flap {
     transform: rotateX(180deg);
 }
+
 .envelope .body {
     position: absolute;
     top: 0;
@@ -224,6 +283,7 @@ canvas {
     border-bottom: 100px solid #a0284f;
     z-index: 1;
 }
+
 .envelope .heart {
     position: absolute;
     top: 50%;
@@ -233,9 +293,11 @@ canvas {
     z-index: 3;
     animation: heartbeat 1.5s infinite;
 }
+
 .envelope.open .heart {
     opacity: 0;
 }
+
 .click-text {
     position: absolute;
     bottom: -40px;
@@ -246,9 +308,17 @@ canvas {
     font-size: 1.2rem;
     letter-spacing: 1px;
 }
+
 @keyframes heartbeat {
-    0%, 100% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.2); }
+
+    0%,
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
 }
 
 /* ==============================================
@@ -260,23 +330,27 @@ canvas {
     color: #ff758f;
     margin-bottom: 10px;
 }
+
 .subtitle-elegant {
     font-size: 1rem;
     color: #ffb3c6;
     margin-bottom: 40px;
 }
+
 .cake-container {
     position: relative;
     cursor: pointer;
 }
+
 .cake {
     position: relative;
     width: 200px;
     height: 100px;
     background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
+
 .icing {
     position: absolute;
     top: -20px;
@@ -286,6 +360,7 @@ canvas {
     background-color: #ff8fa3;
     border-radius: 20px 20px 0 0;
 }
+
 .sponge {
     position: absolute;
     top: 20px;
@@ -294,6 +369,7 @@ canvas {
     background-color: #ffccd5;
     border-radius: 0 0 10px 10px;
 }
+
 .candle {
     position: absolute;
     top: -60px;
@@ -301,15 +377,14 @@ canvas {
     transform: translateX(-50%);
     width: 15px;
     height: 60px;
-    background: repeating-linear-gradient(
-        45deg,
-        #fff,
-        #fff 5px,
-        #c9184a 5px,
-        #c9184a 10px
-    );
+    background: repeating-linear-gradient(45deg,
+            #fff,
+            #fff 5px,
+            #c9184a 5px,
+            #c9184a 10px);
     border-radius: 5px;
 }
+
 .flame {
     position: absolute;
     top: -25px;
@@ -323,13 +398,22 @@ canvas {
     animation: flicker 0.5s infinite alternate;
     transition: opacity 0.5s ease;
 }
+
 .flame.out {
     opacity: 0;
     animation: none;
 }
+
 @keyframes flicker {
-    0% { transform: translateX(-50%) scale(1); opacity: 1; }
-    100% { transform: translateX(-50%) scale(1.1); opacity: 0.8; }
+    0% {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1.1);
+        opacity: 0.8;
+    }
 }
 
 /* ==============================================
@@ -340,6 +424,7 @@ canvas {
     text-align: center;
     position: relative;
 }
+
 .header-section {
     height: 100vh;
     display: flex;
@@ -347,6 +432,7 @@ canvas {
     justify-content: center;
     align-items: center;
 }
+
 .tiny-heading {
     font-size: 0.8rem;
     letter-spacing: 2px;
@@ -354,22 +440,26 @@ canvas {
     margin-bottom: 15px;
     text-transform: uppercase;
 }
+
 .main-title {
     font-family: 'Playfair Display', serif;
     font-size: 3.5rem;
     line-height: 1.2;
     font-weight: 400;
 }
+
 .main-title i {
     color: #ff758f;
     font-size: 3rem;
 }
+
 .divider {
     width: 1px;
     height: 40px;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     margin: 30px 0 15px 0;
 }
+
 .typewriter-text {
     font-size: 1.1rem;
     font-style: italic;
@@ -383,9 +473,17 @@ canvas {
     display: inline-block;
     animation: blink-caret 0.75s step-end infinite;
 }
+
 @keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: #ffb3c6; }
+
+    from,
+    to {
+        border-color: transparent
+    }
+
+    50% {
+        border-color: #ffb3c6;
+    }
 }
 
 .date-text {
@@ -393,6 +491,7 @@ canvas {
     letter-spacing: 2px;
     opacity: 0.6;
 }
+
 .scroll-down-indicator {
     position: absolute;
     bottom: 40px;
@@ -408,6 +507,7 @@ canvas {
     font-weight: 400;
     margin-bottom: 10px;
 }
+
 .desc-text {
     font-size: 0.9rem;
     opacity: 0.7;
@@ -421,6 +521,7 @@ canvas {
     width: 100%;
     margin-top: 50px;
 }
+
 .bouquet-wrap {
     position: absolute;
     bottom: -10px;
@@ -436,9 +537,10 @@ canvas {
     z-index: 5;
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
-    border-top: 1px solid rgba(255,255,255,0.3);
-    box-shadow: inset 0 0 20px rgba(255,183,197,0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: inset 0 0 20px rgba(255, 183, 197, 0.2);
 }
+
 .bouquet-tie {
     position: absolute;
     bottom: 20px;
@@ -459,15 +561,43 @@ canvas {
     background: #5a8a5f;
     border-radius: 2px;
     transform-origin: bottom center;
+    margin-left: -2px;
+    /* Center perfectly on 50% */
     z-index: 2;
 }
-.stem-1 { left: 50%; height: 180px; transform: rotate(-35deg); }
-.stem-2 { left: 50%; height: 220px; transform: rotate(-15deg); }
-.stem-3 { left: 50%; height: 250px; transform: rotate(0deg) translateX(-50%); }
-.stem-4 { left: 50%; height: 220px; transform: rotate(15deg); }
-.stem-5 { left: 50%; height: 180px; transform: rotate(35deg); }
 
-.stem::after, .stem::before {
+.stem-1 {
+    left: 50%;
+    height: 180px;
+    transform: rotate(-35deg);
+}
+
+.stem-2 {
+    left: 50%;
+    height: 220px;
+    transform: rotate(-15deg);
+}
+
+.stem-3 {
+    left: 50%;
+    height: 250px;
+    transform: rotate(0deg);
+}
+
+.stem-4 {
+    left: 50%;
+    height: 220px;
+    transform: rotate(15deg);
+}
+
+.stem-5 {
+    left: 50%;
+    height: 180px;
+    transform: rotate(35deg);
+}
+
+.stem::after,
+.stem::before {
     content: '';
     position: absolute;
     width: 15px;
@@ -475,23 +605,60 @@ canvas {
     background: #5a8a5f;
     border-radius: 15px 0 15px 0;
 }
-.stem::after { top: 40%; left: 100%; transform: rotate(-20deg); }
-.stem::before { top: 60%; right: 100%; transform: rotate(20deg) scaleX(-1); }
+
+.stem::after {
+    top: 40%;
+    left: 100%;
+    transform: rotate(-20deg);
+}
+
+.stem::before {
+    top: 60%;
+    right: 100%;
+    transform: rotate(20deg) scaleX(-1);
+}
 
 .flower {
     position: absolute;
     font-size: 2.5rem;
     z-index: 10;
     cursor: pointer;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+    transform: translate(-50%, 50%) scale(1);
     transition: transform 0.3s;
-    filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
 }
-.flower:hover { transform: scale(1.2); }
-.f-1 { bottom: 200px; left: calc(50% - 110px); }
-.f-2 { bottom: 250px; left: calc(50% - 60px); font-size: 3rem; }
-.f-3 { bottom: 280px; left: calc(50% - 20px); font-size: 3.5rem; }
-.f-4 { bottom: 250px; left: calc(50% + 40px); font-size: 3rem; }
-.f-5 { bottom: 200px; left: calc(50% + 80px); }
+
+.flower:hover {
+    transform: translate(-50%, 50%) scale(1.2);
+}
+
+.f-1 {
+    bottom: 197px;
+    left: calc(50% - 103px);
+}
+
+.f-2 {
+    bottom: 262px;
+    left: calc(50% - 57px);
+    font-size: 3rem;
+}
+
+.f-3 {
+    bottom: 300px;
+    left: 50%;
+    font-size: 3.5rem;
+}
+
+.f-4 {
+    bottom: 262px;
+    left: calc(50% + 57px);
+    font-size: 3rem;
+}
+
+.f-5 {
+    bottom: 197px;
+    left: calc(50% + 103px);
+}
 
 .hint-box {
     margin-top: 20px;
@@ -500,7 +667,7 @@ canvas {
     border-radius: 20px;
     font-size: 0.9rem;
     display: inline-block;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Notes / Letter Section */
@@ -509,27 +676,33 @@ canvas {
     background-color: transparent !important;
     padding: 30px;
     border-radius: 5px;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.2);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     position: relative;
     max-width: 90%;
     margin: 30px auto 0;
     color: #333;
 }
+
 .notepad::before {
     content: '';
     position: absolute;
-    top: 0; bottom: 0; left: 30px;
+    top: 0;
+    bottom: 0;
+    left: 30px;
     width: 2px;
     background-color: #ff4d6d;
     opacity: 0.3;
 }
+
 .notepad-lines {
     background-image: repeating-linear-gradient(transparent, transparent 31px, #ccc 31px, #ccc 32px);
     line-height: 32px;
     text-align: left;
     padding-left: 20px;
 }
+
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@500&display=swap');
+
 .handwriting {
     font-family: 'Caveat', cursive;
     font-size: 1.5rem;
@@ -544,20 +717,23 @@ canvas {
     gap: 40px;
     padding-bottom: 50px;
 }
+
 .polaroid {
     background-image: linear-gradient(#fff, #fff);
     background-color: transparent !important;
     padding: 10px 10px 20px 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
     position: relative;
     width: 80%;
     max-width: 300px;
 }
+
 .polaroid img {
     width: 100%;
     height: auto;
     display: block;
 }
+
 .polaroid .caption {
     color: #555;
     font-family: 'Playfair Display', serif;
@@ -565,6 +741,7 @@ canvas {
     margin-top: 15px;
     font-size: 1rem;
 }
+
 .tape {
     position: absolute;
     top: -15px;
@@ -573,27 +750,34 @@ canvas {
     width: 80px;
     height: 30px;
     background: rgba(245, 240, 200, 0.8);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     z-index: 2;
 }
-.p-left { transform: rotate(-4deg); }
-.p-right { transform: rotate(3deg); }
+
+.p-left {
+    transform: rotate(-4deg);
+}
+
+.p-right {
+    transform: rotate(3deg);
+}
 
 /* Cake Button */
 .open-cake-btn {
     padding: 15px 40px;
     font-size: 1.2rem;
-    background: rgba(255,255,255,0.1);
+    background: rgba(255, 255, 255, 0.1);
     color: #fff;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 30px;
     backdrop-filter: blur(5px);
     cursor: pointer;
     transition: background 0.3s;
     font-family: 'Playfair Display', serif;
 }
+
 .open-cake-btn:hover {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* ==============================================
@@ -601,8 +785,11 @@ canvas {
    ============================================== */
 .modal-overlay {
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -612,10 +799,12 @@ canvas {
     pointer-events: none;
     transition: opacity 0.3s;
 }
+
 .modal-overlay.active {
     opacity: 1;
     pointer-events: all;
 }
+
 .modal-card {
     width: 85%;
     max-width: 350px;
@@ -625,31 +814,36 @@ canvas {
     flex-direction: column;
     align-items: center;
 }
+
 .modal-emoji {
     font-size: 4rem;
     margin-bottom: 20px;
 }
+
 .modal-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.8rem;
     font-weight: 400;
     margin-bottom: 15px;
 }
+
 .modal-text {
     font-size: 1rem;
     opacity: 0.8;
     margin-bottom: 30px;
     line-height: 1.5;
 }
+
 .close-btn {
     background: transparent;
     color: #fff;
-    border: 1px solid rgba(255,255,255,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 8px 20px;
     border-radius: 20px;
     cursor: pointer;
     font-family: 'Quicksand', sans-serif;
 }
+
 .modal-footer-text {
     margin-top: 30px;
     font-style: italic;
@@ -658,9 +852,22 @@ canvas {
 }
 
 @keyframes bounce {
-    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-    40% { transform: translateY(-10px); }
-    60% { transform: translateY(-5px); }
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0);
+    }
+
+    40% {
+        transform: translateY(-10px);
+    }
+
+    60% {
+        transform: translateY(-5px);
+    }
 }
 
 /* ==============================================
@@ -670,10 +877,12 @@ canvas {
     padding-bottom: 50px;
     text-align: left;
 }
-.timeline-section .tiny-heading, 
+
+.timeline-section .tiny-heading,
 .timeline-section .sub-title {
     text-align: center;
 }
+
 .timeline {
     position: relative;
     max-width: 90%;
@@ -681,16 +890,20 @@ canvas {
     padding-left: 20px;
     border-left: 2px solid rgba(255, 117, 143, 0.4);
 }
+
 .timeline-item {
     position: relative;
     margin-bottom: 30px;
 }
+
 .timeline-item:last-child {
     margin-bottom: 0;
 }
+
 .timeline-dot {
     position: absolute;
-    left: -27px; /* 20 padding + 2px border - 6px radius */
+    left: -27px;
+    /* 20 padding + 2px border - 6px radius */
     top: 5px;
     width: 12px;
     height: 12px;
@@ -698,19 +911,22 @@ canvas {
     background-color: #ff758f;
     box-shadow: 0 0 10px #ff758f;
 }
+
 .timeline-content {
     background: rgba(255, 255, 255, 0.05);
     padding: 15px;
     border-radius: 10px;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .timeline-content h3 {
     font-family: 'Playfair Display', serif;
     color: #ffb3c6;
     margin-bottom: 5px;
     font-size: 1.2rem;
 }
+
 .timeline-content p {
     font-size: 0.9rem;
     opacity: 0.8;
@@ -724,11 +940,13 @@ canvas {
     width: 90%;
     max-width: 400px;
 }
+
 .image-modal-card img {
     width: 100%;
     border-radius: 10px;
     margin-bottom: 15px;
 }
+
 .modal-img-caption {
     font-family: 'Playfair Display', serif;
     font-style: italic;
@@ -736,10 +954,12 @@ canvas {
     color: #ffb3c6;
     font-size: 1.1rem;
 }
+
 .polaroid {
     cursor: pointer;
     transition: transform 0.2s;
 }
+
 .polaroid:hover {
     transform: scale(1.05) rotate(0deg);
     z-index: 10;
@@ -752,6 +972,7 @@ canvas {
     padding: 60px 20px;
     text-align: center;
 }
+
 .wishes-title {
     font-family: 'Playfair Display', serif;
     font-size: 2.5rem;
@@ -760,10 +981,12 @@ canvas {
     margin-bottom: 30px;
     color: #f7e6eb;
 }
+
 .wishes-title i {
     color: #ff758f;
     font-style: italic;
 }
+
 .wishes-desc {
     font-size: 0.95rem;
     line-height: 1.8;
@@ -773,6 +996,7 @@ canvas {
     margin-left: auto;
     margin-right: auto;
 }
+
 .wishes-divider {
     font-style: italic;
     color: #ffb3c6;
@@ -788,21 +1012,23 @@ canvas {
     border-radius: 30px;
     padding: 30px;
     width: 320px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 .music-album-art {
     width: 200px;
     height: 200px;
     border-radius: 50%;
     margin-bottom: 20px;
-    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
     overflow: hidden;
     position: relative;
 }
+
 .music-album-art::after {
     content: '';
     position: absolute;
@@ -815,72 +1041,88 @@ canvas {
     transform: translate(-50%, -50%);
     border: 2px solid #333;
 }
+
 .spinning-record {
     width: 100%;
     height: 100%;
     -o-object-fit: cover;
-       object-fit: cover;
+    object-fit: cover;
     animation: spin 10s linear infinite;
 }
+
 @keyframes spin {
-    100% { transform: rotate(360deg); }
+    100% {
+        transform: rotate(360deg);
+    }
 }
+
 .music-title {
     font-size: 1.4rem;
     font-weight: bold;
     color: #fff;
     margin-bottom: 5px;
 }
+
 .music-artist {
     font-size: 0.9rem;
     color: #ffb3c6;
     margin-bottom: 20px;
 }
+
 .song-selector {
     width: 100%;
     margin-bottom: 20px;
 }
+
 .song-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
 }
+
 .song-item {
     display: flex;
     align-items: center;
     background: rgba(255, 255, 255, 0.05);
     padding: 10px 15px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: background 0.3s, transform 0.2s, border-color 0.3s;
 }
+
 .song-item:hover {
     background: rgba(255, 255, 255, 0.1);
 }
+
 .song-item.active {
     background: rgba(255, 117, 143, 0.2);
     border-color: #ff758f;
     transform: scale(1.02);
 }
+
 .song-icon {
     font-size: 1.5rem;
     margin-right: 15px;
 }
+
 .song-info {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 }
+
 .song-name {
     font-weight: bold;
     color: #fff;
     font-size: 1rem;
 }
+
 .song-sub {
     font-size: 0.75rem;
     color: #ffb3c6;
 }
+
 .play-btn {
     background: #ffb3c6;
     color: #4a1523;
@@ -893,6 +1135,7 @@ canvas {
     transition: transform 0.2s, background 0.2s;
     box-shadow: 0 5px 15px rgba(255, 179, 198, 0.4);
 }
+
 .play-btn:hover {
     transform: scale(1.05);
     background: #fff;
@@ -913,24 +1156,28 @@ canvas {
     width: 90%;
     max-width: 350px;
 }
+
 .calendar-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.5rem;
     margin-bottom: 15px;
     color: #ffb3c6;
 }
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     text-align: center;
 }
+
 .day-name {
     font-size: 0.8rem;
     font-weight: bold;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 255, 255, 0.6);
     margin-bottom: 5px;
 }
+
 .day {
     font-size: 0.9rem;
     padding: 5px;
@@ -942,6 +1189,7 @@ canvas {
     height: 30px;
     margin: auto;
 }
+
 .special-day {
     background: #ff758f;
     color: #fff;
@@ -949,6 +1197,7 @@ canvas {
     font-weight: bold;
     position: relative;
 }
+
 .special-day::after {
     content: '❤️';
     position: absolute;
@@ -968,12 +1217,14 @@ canvas {
     align-items: center;
     text-align: center;
 }
+
 .center-btn-wrapper {
     margin-top: 20px;
     display: flex;
     justify-content: center;
     width: 100%;
 }
+
 .pb-card {
     padding: 20px;
     width: 95%;
@@ -982,48 +1233,59 @@ canvas {
     flex-direction: column;
     align-items: center;
 }
+
 .pb-container {
     position: relative;
     width: 100%;
-    aspect-ratio: 3 / 4; /* A decent ratio for selfie preview */
+    aspect-ratio: 3 / 4;
+    /* A decent ratio for selfie preview */
     background: #000;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 20px;
 }
+
 #pb-video {
     position: absolute;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     -o-object-fit: cover;
-       object-fit: cover;
+    object-fit: cover;
     z-index: 1;
-    transform: scaleX(-1); /* Mirror camera */
+    transform: scaleX(-1);
+    /* Mirror camera */
 }
+
 #pb-canvas {
     position: absolute;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     z-index: 10;
 }
+
 .pb-controls {
     display: flex;
     gap: 15px;
     width: 100%;
     justify-content: center;
 }
+
 .secondary-btn {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
+
 .pb-instruction {
     font-size: 0.9rem;
     color: #ffb3c6;
     margin-bottom: 10px;
     height: 20px;
 }
+
 .pb-countdown {
     position: absolute;
     top: 50%;
@@ -1035,6 +1297,7 @@ canvas {
     text-shadow: 0 0 20px #ffb3c6;
     z-index: 20;
 }
+
 .vip-btn {
     background: linear-gradient(45deg, #ff758f, #ffb3c6);
     color: #4a1523;
@@ -1047,13 +1310,16 @@ canvas {
     align-items: center;
     gap: 8px;
 }
+
 .vip-btn:hover {
     transform: translateY(-3px) scale(1.05);
     box-shadow: 0 15px 25px rgba(255, 117, 143, 0.6);
 }
+
 .btn-icon {
     font-size: 1.2rem;
 }
+
 .hidden {
     display: none !important;
 }
