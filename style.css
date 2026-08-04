@@ -22,10 +22,19 @@ body.scroll-active {
     overflow-x: hidden;
 }
 
-/* Fix for canvas-confetti white screen on mobile */
-canvas {
+/* Fix for canvas-confetti white screen on mobile / in-app browsers */
+canvas:not(#pb-canvas) {
     background-color: transparent !important;
     background-image: none !important;
+    /* Hardware acceleration and compositing fixes for WebView */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000;
+    -webkit-perspective: 1000;
+    pointer-events: none;
+    opacity: 0.99;
 }
 
 #mobile-container {
