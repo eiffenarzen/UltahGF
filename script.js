@@ -161,7 +161,7 @@ function showModal(emoji, title, text) {
 }
 
 function showCakeModal() {
-    showModal('🎂', 'Happy Birthday!', 'The most special Salsa Sabria 🌸');
+    showModal('🎂', 'Happy Birthday!', 'The most special salsa sabria 🌸');
 }
 
 function closeModal(id) {
