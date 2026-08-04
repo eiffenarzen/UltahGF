@@ -3,7 +3,16 @@ const screenPin = document.getElementById('screen-pin');
 const screenEnvelope = document.getElementById('screen-envelope');
 const screenCake = document.getElementById('screen-cake');
 const screenMain = document.getElementById('screen-main');
+const screenMusic = document.getElementById('screen-music');
 const bgMusic = document.getElementById('bg-music');
+
+// Buat custom confetti instance yang terikat ke canvas statis dan matikan worker (buat hindari bug WebView)
+const confettiCanvas = document.getElementById('confetti-canvas');
+const customConfetti = confetti.create(confettiCanvas, {
+    resize: true,
+    useWorker: false
+});
+
 const pinDots = document.querySelectorAll('.dot');
 const pinDotsContainer = document.querySelector('.pin-dots');
 
@@ -93,7 +102,7 @@ function openEnvelope() {
         envelope.classList.add('open');
 
         // Throw confetti
-        confetti({
+        customConfetti({
             particleCount: 100,
             spread: 70,
             origin: { y: 0.6 }
@@ -125,7 +134,7 @@ function blowCandles() {
         flame.classList.add('out');
 
         // Throw confetti
-        confetti({
+        customConfetti({
             particleCount: 150,
             spread: 100,
             origin: { y: 0.6 }
